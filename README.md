@@ -1,1 +1,1 @@
-# fullstack-dapp-hardhat-solidity-ether-react
+# dapp-hardhat-express-ether
