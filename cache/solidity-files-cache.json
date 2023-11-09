@@ -1,10 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\AdamDeen\\Documents\\Projects\\Dapp\\dapp-hardhat-express-ether\\contracts\\Lock.sol": {
-      "lastModificationDate": 1699472029479,
+    "C:\\Users\\AdamDeen\\Documents\\Projects\\Dapp\\dapp-hardhat-express-ether\\contracts\\productApi.sol": {
+      "lastModificationDate": 1699477369925,
       "contentHash": "cd34fe60830c49079a103205c04dad4f",
-      "sourceName": "contracts/Lock.sol",
+      "sourceName": "contracts/productApi.sol",
       "solcConfig": {
         "version": "0.8.19",
         "settings": {

@@ -33,6 +33,7 @@ app.get("/products/", async (req, res) => {
 app.post("/products", async (req, res) => {
   try {
     const { id, name, price, quantity } = req.body;
+
     const transaction = await contractInstance.setProduct(
       id,
       name,

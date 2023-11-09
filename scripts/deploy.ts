@@ -1,19 +1,22 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
+import dotenv from "dotenv";
+dotenv.config();
+
+const { PUBLIC_KEY } = process.env;
 
 async function main() {
-  
+  if (!PUBLIC_KEY) {
+    throw new Error("Please set the PRIVATE_KEY environment variable.");
+  }
 
   const ContractFactory = await ethers.getContractFactory("productApi");
-  const contract = await ContractFactory.deploy();
+  const owner = await ethers.getSigner(PUBLIC_KEY);
+  const contract = await ContractFactory.connect(owner).deploy();
 
+  await contract.deployed();
 
-  await contract.waitForDeployment();
-
-  const address = await contract.getAddress();
-
-  console.log(
-    "Contract Address:", address
-  );
+  console.log("Contract Address:", contract.address);
+  console.log("Contract Owner:", owner);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

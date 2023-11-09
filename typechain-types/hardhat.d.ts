@@ -4,53 +4,23 @@
 
 import { ethers } from "ethers";
 import {
-  DeployContractOptions,
   FactoryOptions,
   HardhatEthersHelpers as HardhatEthersHelpersBase,
-} from "@nomicfoundation/hardhat-ethers/types";
+} from "@nomiclabs/hardhat-ethers/types";
 
 import * as Contracts from ".";
 
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Lock",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Lock__factory>;
-    getContractFactory(
       name: "ProductApi",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ProductApi__factory>;
 
     getContractAt(
-      name: "Lock",
-      address: string | ethers.Addressable,
+      name: "ProductApi",
+      address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Lock>;
-    getContractAt(
-      name: "ProductApi",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ProductApi>;
-
-    deployContract(
-      name: "Lock",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Lock>;
-    deployContract(
-      name: "ProductApi",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ProductApi>;
-
-    deployContract(
-      name: "Lock",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Lock>;
-    deployContract(
-      name: "ProductApi",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ProductApi>;
 
     // default types
@@ -60,22 +30,13 @@ declare module "hardhat/types/runtime" {
     ): Promise<ethers.ContractFactory>;
     getContractFactory(
       abi: any[],
-      bytecode: ethers.BytesLike,
+      bytecode: ethers.utils.BytesLike,
       signer?: ethers.Signer
     ): Promise<ethers.ContractFactory>;
     getContractAt(
       nameOrAbi: string | any[],
-      address: string | ethers.Addressable,
+      address: string,
       signer?: ethers.Signer
-    ): Promise<ethers.Contract>;
-    deployContract(
-      name: string,
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<ethers.Contract>;
-    deployContract(
-      name: string,
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<ethers.Contract>;
   }
 }

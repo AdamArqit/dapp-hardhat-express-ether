@@ -3,42 +3,56 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
+  TypedEventFilter,
+  TypedEvent,
   TypedListener,
-  TypedContractMethod,
+  OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export declare namespace ProductApi {
   export type ProductStruct = {
-    id: BigNumberish;
-    name: string;
-    price: BigNumberish;
-    quantity: BigNumberish;
+    id: PromiseOrValue<BigNumberish>;
+    name: PromiseOrValue<string>;
+    price: PromiseOrValue<BigNumberish>;
+    quantity: PromiseOrValue<BigNumberish>;
   };
 
   export type ProductStructOutput = [
-    id: bigint,
-    name: string,
-    price: bigint,
-    quantity: bigint
-  ] & { id: bigint; name: string; price: bigint; quantity: bigint };
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & { id: BigNumber; name: string; price: BigNumber; quantity: BigNumber };
 }
 
-export interface ProductApiInterface extends Interface {
+export interface ProductApiInterface extends utils.Interface {
+  functions: {
+    "deleteProduct(uint256)": FunctionFragment;
+    "getAllProducts()": FunctionFragment;
+    "getProduct(uint256)": FunctionFragment;
+    "productArray(uint256)": FunctionFragment;
+    "products(uint256)": FunctionFragment;
+    "removeMe()": FunctionFragment;
+    "setProduct(uint256,string,uint256,uint256)": FunctionFragment;
+    "updateProduct(uint256,string,uint256,uint256)": FunctionFragment;
+  };
+
   getFunction(
-    nameOrSignature:
+    nameOrSignatureOrTopic:
       | "deleteProduct"
       | "getAllProducts"
       | "getProduct"
@@ -51,7 +65,7 @@ export interface ProductApiInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "deleteProduct",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAllProducts",
@@ -59,24 +73,34 @@ export interface ProductApiInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getProduct",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "productArray",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "products",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "removeMe", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setProduct",
-    values: [BigNumberish, string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "updateProduct",
-    values: [BigNumberish, string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -99,209 +123,318 @@ export interface ProductApiInterface extends Interface {
     functionFragment: "updateProduct",
     data: BytesLike
   ): Result;
+
+  events: {};
 }
 
 export interface ProductApi extends BaseContract {
-  connect(runner?: ContractRunner | null): ProductApi;
-  waitForDeployment(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
   interface: ProductApiInterface;
 
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  ): Promise<Array<TEvent>>;
 
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
+  functions: {
+    deleteProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+    getAllProducts(
+      overrides?: CallOverrides
+    ): Promise<[ProductApi.ProductStructOutput[]]>;
 
-  deleteProduct: TypedContractMethod<[_id: BigNumberish], [void], "nonpayable">;
+    getProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string, BigNumber, BigNumber]>;
 
-  getAllProducts: TypedContractMethod<
-    [],
-    [ProductApi.ProductStructOutput[]],
-    "view"
-  >;
-
-  getProduct: TypedContractMethod<
-    [_id: BigNumberish],
-    [[string, bigint, bigint]],
-    "view"
-  >;
-
-  productArray: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [bigint, string, bigint, bigint] & {
-        id: bigint;
+    productArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, BigNumber] & {
+        id: BigNumber;
         name: string;
-        price: bigint;
-        quantity: bigint;
+        price: BigNumber;
+        quantity: BigNumber;
       }
-    ],
-    "view"
-  >;
+    >;
 
-  products: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [bigint, string, bigint, bigint] & {
-        id: bigint;
+    products(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, BigNumber] & {
+        id: BigNumber;
         name: string;
-        price: bigint;
-        quantity: bigint;
+        price: BigNumber;
+        quantity: BigNumber;
       }
-    ],
-    "view"
-  >;
+    >;
 
-  removeMe: TypedContractMethod<
-    [],
-    [
-      [bigint, string, bigint, bigint] & {
-        id: bigint;
+    removeMe(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, BigNumber] & {
+        id: BigNumber;
         name: string;
-        price: bigint;
-        quantity: bigint;
+        price: BigNumber;
+        quantity: BigNumber;
       }
-    ],
-    "view"
+    >;
+
+    setProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+  };
+
+  deleteProduct(
+    _id: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getAllProducts(
+    overrides?: CallOverrides
+  ): Promise<ProductApi.ProductStructOutput[]>;
+
+  getProduct(
+    _id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<[string, BigNumber, BigNumber]>;
+
+  productArray(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, string, BigNumber, BigNumber] & {
+      id: BigNumber;
+      name: string;
+      price: BigNumber;
+      quantity: BigNumber;
+    }
   >;
 
-  setProduct: TypedContractMethod<
-    [
-      _id: BigNumberish,
-      _name: string,
-      _price: BigNumberish,
-      _quantity: BigNumberish
-    ],
-    [void],
-    "nonpayable"
+  products(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, string, BigNumber, BigNumber] & {
+      id: BigNumber;
+      name: string;
+      price: BigNumber;
+      quantity: BigNumber;
+    }
   >;
 
-  updateProduct: TypedContractMethod<
-    [
-      _id: BigNumberish,
-      _name: string,
-      _price: BigNumberish,
-      _quantity: BigNumberish
-    ],
-    [void],
-    "nonpayable"
+  removeMe(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, string, BigNumber, BigNumber] & {
+      id: BigNumber;
+      name: string;
+      price: BigNumber;
+      quantity: BigNumber;
+    }
   >;
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  setProduct(
+    _id: PromiseOrValue<BigNumberish>,
+    _name: PromiseOrValue<string>,
+    _price: PromiseOrValue<BigNumberish>,
+    _quantity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
-  getFunction(
-    nameOrSignature: "deleteProduct"
-  ): TypedContractMethod<[_id: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "getAllProducts"
-  ): TypedContractMethod<[], [ProductApi.ProductStructOutput[]], "view">;
-  getFunction(
-    nameOrSignature: "getProduct"
-  ): TypedContractMethod<
-    [_id: BigNumberish],
-    [[string, bigint, bigint]],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "productArray"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [bigint, string, bigint, bigint] & {
-        id: bigint;
+  updateProduct(
+    _id: PromiseOrValue<BigNumberish>,
+    _name: PromiseOrValue<string>,
+    _price: PromiseOrValue<BigNumberish>,
+    _quantity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    deleteProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getAllProducts(
+      overrides?: CallOverrides
+    ): Promise<ProductApi.ProductStructOutput[]>;
+
+    getProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string, BigNumber, BigNumber]>;
+
+    productArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, BigNumber] & {
+        id: BigNumber;
         name: string;
-        price: bigint;
-        quantity: bigint;
+        price: BigNumber;
+        quantity: BigNumber;
       }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "products"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [bigint, string, bigint, bigint] & {
-        id: bigint;
+    >;
+
+    products(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, BigNumber] & {
+        id: BigNumber;
         name: string;
-        price: bigint;
-        quantity: bigint;
+        price: BigNumber;
+        quantity: BigNumber;
       }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "removeMe"
-  ): TypedContractMethod<
-    [],
-    [
-      [bigint, string, bigint, bigint] & {
-        id: bigint;
+    >;
+
+    removeMe(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, BigNumber] & {
+        id: BigNumber;
         name: string;
-        price: bigint;
-        quantity: bigint;
+        price: BigNumber;
+        quantity: BigNumber;
       }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "setProduct"
-  ): TypedContractMethod<
-    [
-      _id: BigNumberish,
-      _name: string,
-      _price: BigNumberish,
-      _quantity: BigNumberish
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "updateProduct"
-  ): TypedContractMethod<
-    [
-      _id: BigNumberish,
-      _name: string,
-      _price: BigNumberish,
-      _quantity: BigNumberish
-    ],
-    [void],
-    "nonpayable"
-  >;
+    >;
+
+    setProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
   filters: {};
+
+  estimateGas: {
+    deleteProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getAllProducts(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    productArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    products(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    removeMe(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    deleteProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getAllProducts(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    productArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    products(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeMe(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateProduct(
+      _id: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
+      _price: PromiseOrValue<BigNumberish>,
+      _quantity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+  };
 }

@@ -7,14 +7,16 @@ const { PRIVATE_KEY, API_URL } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.19",
-  defaultNetwork: "volta",
+  defaultNetwork: "hardhat",
   networks: {
-    hardhat: {},
+    hardhat: {
+      from: `0x${PRIVATE_KEY}`,
+    },
     volta: {
       url: `${API_URL}`,
-      accounts: [`0x${PRIVATE_KEY}`]
-    }
-  }
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+  },
 };
 
 export default config;
